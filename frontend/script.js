@@ -1,5 +1,4 @@
-
-const API_URL = "http://localhost:5000/api/properties";
+const API_URL = "https://my-rental-room-backend.onrender.com/api/properties";
 
 const properties = [];
 const favorites = new Set();
@@ -99,6 +98,7 @@ function displayProperties(data) {
 
         document.getElementById("empty-reset-btn")
             .addEventListener("click", resetSearch);
+
         return;
     }
 
@@ -130,12 +130,18 @@ function displayProperties(data) {
             : `Match: ${recommendation.percentage}%`;
 
         const favoriteButton = document.createElement("button");
-        favoriteButton.className = `favorite-btn ${isFavorite ? "saved" : ""}`;
+        favoriteButton.className =
+            `favorite-btn ${isFavorite ? "saved" : ""}`;
         favoriteButton.textContent = isFavorite ? "♥" : "♡";
         favoriteButton.setAttribute("aria-label", "Toggle favorite");
         favoriteButton.setAttribute("aria-pressed", String(isFavorite));
-        favoriteButton.title = isFavorite ? "Remove favorite" : "Save property";
-        favoriteButton.addEventListener("click", () => toggleFavorite(property.id));
+        favoriteButton.title = isFavorite
+            ? "Remove favorite"
+            : "Save property";
+
+        favoriteButton.addEventListener("click", () => {
+            toggleFavorite(property.id);
+        });
 
         imageWrapper.append(image, badge, favoriteButton);
 
@@ -162,17 +168,21 @@ function displayProperties(data) {
 
         const price = document.createElement("span");
         price.className = "price";
-        price.textContent = `₹${Number(property.price).toLocaleString("en-IN")} `;
+        price.textContent =
+            `₹${Number(property.price).toLocaleString("en-IN")} `;
 
         const monthly = document.createElement("small");
         monthly.textContent = "/ month";
+
         price.appendChild(monthly);
         info.appendChild(price);
 
         const detailsButton = document.createElement("button");
         detailsButton.className = "details-btn";
         detailsButton.textContent = "View Details →";
-        detailsButton.addEventListener("click", () => viewDetails(property.id));
+        detailsButton.addEventListener("click", () => {
+            viewDetails(property.id);
+        });
 
         content.append(type, title, location, reasons, info, detailsButton);
         card.append(imageWrapper, content);
@@ -211,7 +221,6 @@ function searchProperties() {
 
     displayProperties(rankedProperties);
 
-    // Bring the updated results into view.
     document.getElementById("properties").scrollIntoView({
         behavior: "smooth",
         block: "start"
@@ -283,13 +292,17 @@ function resetSearch() {
 }
 
 // --------------------------------------------------
-// 8. LOAD PROPERTIES FROM BACKEND
+// 8. LOAD PROPERTIES FROM DEPLOYED BACKEND
 // --------------------------------------------------
 
 async function loadProperties() {
     const container = document.getElementById("property-container");
 
-    container.innerHTML = "<p>Loading properties...</p>";
+    container.innerHTML = `
+        <div class="empty-state">
+            <p>Loading properties...</p>
+        </div>
+    `;
 
     try {
         const response = await fetch(API_URL);
@@ -314,7 +327,10 @@ async function loadProperties() {
         container.innerHTML = `
             <div class="empty-state">
                 <h3>Unable to load properties</h3>
-                <p>Check your backend connection and try again.</p>
+                <p>
+                    The server may be starting, or the connection failed.
+                    Please try again.
+                </p>
                 <button class="details-btn" id="retry-load-btn">
                     Try Again
                 </button>
@@ -374,7 +390,7 @@ function initializeListingModal() {
     });
 
     // --------------------------------------------------
-    // 10. SUBMIT A NEW PROPERTY
+    // 10. SUBMIT A NEW PROPERTY TO MONGODB
     // --------------------------------------------------
 
     form.addEventListener("submit", async event => {
@@ -386,14 +402,33 @@ function initializeListingModal() {
         message.textContent = "";
         message.className = "form-message";
 
-        const title = document.getElementById("listing-title-input").value.trim();
-        const location = document.getElementById("listing-location").value.trim();
-        const price = Number(document.getElementById("listing-price").value);
-        const type = document.getElementById("listing-type").value;
-        const image = document.getElementById("listing-image").value.trim();
+        const title = document
+            .getElementById("listing-title-input")
+            .value.trim();
 
-        if (!title || !location || !type || !Number.isFinite(price) || price <= 0) {
-            message.textContent = "Please enter valid details in all required fields.";
+        const location = document
+            .getElementById("listing-location")
+            .value.trim();
+
+        const price = Number(
+            document.getElementById("listing-price").value
+        );
+
+        const type = document.getElementById("listing-type").value;
+
+        const image = document
+            .getElementById("listing-image")
+            .value.trim();
+
+        if (
+            !title ||
+            !location ||
+            !type ||
+            !Number.isFinite(price) ||
+            price <= 0
+        ) {
+            message.textContent =
+                "Please enter valid details in all required fields.";
             message.classList.add("error");
             return;
         }
@@ -415,7 +450,9 @@ function initializeListingModal() {
             const result = await response.json();
 
             if (!response.ok || !result.success) {
-                throw new Error(result.message || "Unable to add property.");
+                throw new Error(
+                    result.message || "Unable to add property."
+                );
             }
 
             message.textContent = "Property added successfully!";
@@ -423,16 +460,14 @@ function initializeListingModal() {
 
             form.reset();
 
-            // Fetch the latest list from MongoDB.
+            // Refresh listings from the backend.
             await loadProperties();
 
-            // Show the updated listings.
             document.getElementById("properties").scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
 
-            // Close the modal after a short pause so success is visible.
             window.setTimeout(() => {
                 if (!modal.hidden) {
                     modal.hidden = true;
@@ -442,7 +477,10 @@ function initializeListingModal() {
             }, 1000);
         } catch (error) {
             console.error("Unable to add property:", error);
-            message.textContent = error.message || "Something went wrong. Please try again.";
+
+            message.textContent =
+                error.message || "Something went wrong. Please try again.";
+
             message.classList.add("error");
         } finally {
             submitButton.disabled = false;
@@ -471,6 +509,9 @@ document.getElementById("view-all-btn")
     });
 });
 
-// Initialize and load data.
+// --------------------------------------------------
+// 12. INITIALIZE APPLICATION
+// --------------------------------------------------
+
 initializeListingModal();
 loadProperties();
