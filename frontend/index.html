@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Rental Room</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">My Rental Room</div>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#properties">Properties</a>
+            <a href="#about">About</a>
+        </div>
+
+        <button class="list-btn" id="open-listing-btn" type="button">
+            List Your Room
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">🏠 Find a place you'll love</span>
+
+            <h1>
+                Find Your Perfect
+                <span>Rental Room</span>
+            </h1>
+
+            <p>
+                Search affordable rooms, apartments and PGs
+                that match your needs.
+            </p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <div class="search-item">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="e.g. Kanpur">
+            </div>
+
+            <div class="search-item">
+                <label for="budget">Maximum Budget</label>
+                <input type="number" id="budget" min="1" placeholder="₹10,000">
+            </div>
+
+            <div class="search-item">
+                <label for="roomType">Room Type</label>
+                <select id="roomType">
+                    <option value="">Any Type</option>
+                    <option value="Single Room">Single Room</option>
+                    <option value="1 BHK">1 BHK</option>
+                    <option value="2 BHK">2 BHK</option>
+                    <option value="PG">PG</option>
+                </select>
+            </div>
+
+            <button class="search-btn" id="search-btn" type="button">
+                🔍 Search
+            </button>
+        </div>
+    </section>
+
+    <!-- Recommended Properties -->
+    <section id="properties" class="properties-section">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">AI POWERED</span>
+                <h2>Recommended for You</h2>
+                <p>Properties selected based on your preferences.</p>
+            </div>
+
+            <button class="view-all" id="view-all-btn" type="button">
+                View All
+            </button>
+        </div>
+
+        <div id="property-container" class="property-grid"></div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about-section">
+        <h2>Simplifying Your Room Search</h2>
+        <p>
+            My Rental Room helps students and working
+            professionals find suitable rental properties
+            quickly using smart search and recommendation
+            features.
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <h3>My Rental Room</h3>
+        <p>Simplified by AI</p>
+    </footer>
+
+    <!-- List Your Room Modal -->
+    <div
+        id="listing-modal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="listing-title"
+        aria-hidden="true"
+        hidden
+    >
+        <div class="modal-content">
+            <button
+                type="button"
+                id="close-listing-btn"
+                class="modal-close"
+                aria-label="Close form"
+            >&times;</button>
+
+            <span class="section-label">ADD A PROPERTY</span>
+            <h2 id="listing-title">List Your Room</h2>
+            <p class="modal-description">
+                Share your room details with people looking for a place to stay.
+            </p>
+
+            <form id="listing-form">
+                <div class="form-group">
+                    <label for="listing-title-input">Room Title *</label>
+                    <input
+                        type="text"
+                        id="listing-title-input"
+                        name="title"
+                        placeholder="e.g. Fully Furnished Room"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="listing-location">Location *</label>
+                    <input
+                        type="text"
+                        id="listing-location"
+                        name="location"
+                        placeholder="e.g. Kalyanpur, Kanpur"
+                        maxlength="150"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="listing-price">Monthly Rent (₹) *</label>
+                    <input
+                        type="number"
+                        id="listing-price"
+                        name="price"
+                        placeholder="e.g. 6000"
+                        min="1"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="listing-type">Room Type *</label>
+                    <select id="listing-type" name="type" required>
+                        <option value="">Select room type</option>
+                        <option value="Single Room">Single Room</option>
+                        <option value="1 BHK">1 BHK</option>
+                        <option value="2 BHK">2 BHK</option>
+                        <option value="PG">PG</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="listing-image">Image URL (optional)</label>
+                    <input
+                        type="url"
+                        id="listing-image"
+                        name="image"
+                        placeholder="https://example.com/room.jpg"
+                    >
+                    <small>Use a publicly accessible image URL.</small>
+                </div>
+
+                <p id="listing-message" class="form-message" role="status" aria-live="polite"></p>
+
+                <button
+                    type="submit"
+                    id="submit-listing-btn"
+                    class="search-btn submit-listing-btn"
+                >
+                    Add Property
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
